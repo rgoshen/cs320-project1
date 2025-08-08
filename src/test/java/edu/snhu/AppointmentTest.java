@@ -4,6 +4,8 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -180,5 +182,60 @@ public class AppointmentTest {
         assertDoesNotThrow(() -> {
             new Appointment(validId, futureDate, specialCharDescription);
         });
+    }
+
+    @Test
+    @DisplayName("Test getAppointmentDate() method and defensive copying")
+    void testGetAppointmentDateDefensiveCopying() {
+        String validId = "APP123";
+        Date originalDate = new Date(System.currentTimeMillis() + 86400000); // Tomorrow
+        String validDescription = "Test appointment";
+
+        Appointment appointment = new Appointment(validId, originalDate, validDescription);
+
+        // Test that getAppointmentDate() returns the correct date
+        Date retrievedDate = appointment.getAppointmentDate();
+        assertEquals(originalDate.getTime(), retrievedDate.getTime(), 
+                     "Retrieved date should equal original date");
+
+        // Test defensive copying - modifying returned date should not affect internal state
+        Date secondRetrievedDate = appointment.getAppointmentDate();
+        assertNotSame(retrievedDate, secondRetrievedDate, 
+                      "Each call to getAppointmentDate() should return a new Date object");
+
+        // Modify the retrieved date and verify internal state is unchanged
+        long originalTime = retrievedDate.getTime();
+        retrievedDate.setTime(0); // Modify returned date
+        
+        Date thirdRetrievedDate = appointment.getAppointmentDate();
+        assertEquals(originalTime, thirdRetrievedDate.getTime(), 
+                     "Internal date should not be affected by modifications to returned date");
+
+        // Verify the retrieved date is different from what we modified
+        assertNotEquals(0, thirdRetrievedDate.getTime(), 
+                        "Internal date should retain original value");
+    }
+
+    @Test
+    @DisplayName("Test constructor defensive copying - original date modification")
+    void testConstructorDefensiveCopying() {
+        String validId = "APP123";
+        Date originalDate = new Date(System.currentTimeMillis() + 86400000); // Tomorrow
+        String validDescription = "Test appointment";
+        long originalTime = originalDate.getTime();
+
+        Appointment appointment = new Appointment(validId, originalDate, validDescription);
+
+        // Modify the original date passed to constructor
+        originalDate.setTime(System.currentTimeMillis() - 86400000); // Yesterday
+
+        // Verify appointment's internal date is unaffected
+        Date appointmentDate = appointment.getAppointmentDate();
+        assertEquals(originalTime, appointmentDate.getTime(), 
+                     "Appointment's internal date should not be affected by modifications to constructor parameter");
+
+        // Verify the appointment still has a valid future date
+        assertNotEquals(originalDate.getTime(), appointmentDate.getTime(), 
+                        "Appointment date should be different from modified original");
     }
 }

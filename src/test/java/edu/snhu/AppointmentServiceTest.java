@@ -215,4 +215,13 @@ public class AppointmentServiceTest {
             appointmentService.deleteAppointment(nonExistentId);
         });
     }
+
+    @Test
+    @DisplayName("Test delete appointment with null ID throws exception")
+    public void testDeleteAppointmentNullId() {
+        // Test null appointment ID should throw exception
+        assertThrows(IllegalArgumentException.class, () -> {
+            appointmentService.deleteAppointment(null);
+        });
+    }
 }
