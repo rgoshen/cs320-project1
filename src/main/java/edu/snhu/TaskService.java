@@ -1,12 +1,12 @@
 package edu.snhu;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Service class for managing Task objects with in-memory storage.
  * Provides CRUD operations (Create, Read, Update, Delete) for tasks
- * using a HashMap for storage with unique ID enforcement.
+ * using a ConcurrentHashMap for storage with unique ID enforcement.
  * 
  * @author Rick Goshen
  * @version 1.0
@@ -16,10 +16,10 @@ public class TaskService {
     
     /**
      * Constructs a new TaskService with an empty task storage.
-     * Initializes HashMap with optimal initial capacity to minimize resizing.
+     * Initializes ConcurrentHashMap with optimal initial capacity to minimize resizing.
      */
     public TaskService() {
-        this.tasks = new HashMap<>(16, 0.75f);
+        this.tasks = new ConcurrentHashMap<>(16, 0.75f);
     }
     
     /**

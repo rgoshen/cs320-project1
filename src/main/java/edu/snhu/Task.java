@@ -86,7 +86,7 @@ public class Task {
      * @param taskId the task ID to validate
      * @throws IllegalArgumentException if taskId is null, empty, or exceeds 10 characters
      */
-    private void validateTaskId(String taskId) {
+    private static void validateTaskId(String taskId) {
         if (taskId == null || taskId.trim().isEmpty() || taskId.length() > 10) {
             throw new IllegalArgumentException("Task ID cannot be null, empty, or exceed 10 characters");
         }
@@ -98,7 +98,7 @@ public class Task {
      * @param taskName the task name to validate
      * @throws IllegalArgumentException if taskName is null or exceeds 20 characters
      */
-    private void validateTaskName(String taskName) {
+    private static void validateTaskName(String taskName) {
         if (taskName == null || taskName.length() > 20) {
             throw new IllegalArgumentException("Task name cannot be null and must be 20 characters or less");
         }
@@ -110,7 +110,7 @@ public class Task {
      * @param taskDescription the task description to validate
      * @throws IllegalArgumentException if taskDescription is null or exceeds 50 characters
      */
-    private void validateTaskDescription(String taskDescription) {
+    private static void validateTaskDescription(String taskDescription) {
         if (taskDescription == null || taskDescription.length() > 50) {
             throw new IllegalArgumentException("Task description cannot be null and must be 50 characters or less");
         }

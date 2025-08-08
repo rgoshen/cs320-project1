@@ -52,14 +52,22 @@ public class AppointmentService {
      * Retrieves an appointment by its ID.
      * 
      * @param appointmentId the unique identifier of the appointment
-     * @return the appointment if found, null otherwise
+     * @return the appointment if found
+     * @throws IllegalArgumentException if appointmentId is null or appointment does not exist
      */
     public Appointment getAppointment(String appointmentId) {
-        // Handle null ID gracefully
+        // Validate appointment ID
         if (appointmentId == null) {
-            return null;
+            throw new IllegalArgumentException("Appointment ID cannot be null");
         }
-        return appointments.get(appointmentId);
+        
+        // Check if appointment exists
+        Appointment appointment = appointments.get(appointmentId);
+        if (appointment == null) {
+            throw new IllegalArgumentException("Appointment ID not found: " + appointmentId);
+        }
+        
+        return appointment;
     }
 
     /**

@@ -61,12 +61,13 @@ public class AppointmentServiceTest {
     }
 
     @Test
-    @DisplayName("Test get non-existent appointment returns null")
+    @DisplayName("Test get non-existent appointment throws exception")
     public void testGetNonExistentAppointment() {
         String nonExistentId = "NOTFOUND";
 
-        Appointment appointment = appointmentService.getAppointment(nonExistentId);
-        assertNull(appointment);
+        assertThrows(IllegalArgumentException.class, () -> {
+            appointmentService.getAppointment(nonExistentId);
+        });
     }
 
     @Test
@@ -111,19 +112,22 @@ public class AppointmentServiceTest {
     }
 
     @Test
-    @DisplayName("Test get appointment with edge case IDs")
+    @DisplayName("Test get appointment with edge case IDs throws exceptions")
     public void testGetAppointmentEdgeCases() {
         // Test with null ID
-        Appointment appointment = appointmentService.getAppointment(null);
-        assertNull(appointment);
+        assertThrows(IllegalArgumentException.class, () -> {
+            appointmentService.getAppointment(null);
+        });
 
         // Test with empty ID
-        appointment = appointmentService.getAppointment("");
-        assertNull(appointment);
+        assertThrows(IllegalArgumentException.class, () -> {
+            appointmentService.getAppointment("");
+        });
 
         // Test with whitespace ID
-        appointment = appointmentService.getAppointment("   ");
-        assertNull(appointment);
+        assertThrows(IllegalArgumentException.class, () -> {
+            appointmentService.getAppointment("   ");
+        });
     }
 
     @Test
@@ -195,8 +199,10 @@ public class AppointmentServiceTest {
             appointmentService.deleteAppointment(appointmentId);
         });
 
-        // Verify it no longer exists
-        assertNull(appointmentService.getAppointment(appointmentId));
+        // Verify it no longer exists (should throw exception)
+        assertThrows(IllegalArgumentException.class, () -> {
+            appointmentService.getAppointment(appointmentId);
+        });
     }
 
     @Test

@@ -1,11 +1,11 @@
 package edu.snhu;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Contact service for managing contacts with CS320 requirements.
- * Provides CRUD operations for contacts using in-memory HashMap storage.
+ * Provides CRUD operations for contacts using in-memory ConcurrentHashMap storage.
  * Enforces unique contact ID constraints and field validation.
  * 
  * @author Rick Goshen
@@ -16,10 +16,10 @@ public class ContactService {
 
     /**
      * Constructs a new ContactService with empty contact storage.
-     * Initializes the internal HashMap for contact management.
+     * Initializes the internal ConcurrentHashMap for contact management.
      */
     public ContactService() {
-        this.contacts = new HashMap<>();
+        this.contacts = new ConcurrentHashMap<>();
     }
 
     /**
