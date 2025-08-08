@@ -4,8 +4,11 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -180,5 +183,90 @@ public class AppointmentTest {
         assertDoesNotThrow(() -> {
             new Appointment(validId, futureDate, specialCharDescription);
         });
+    }
+
+    /**
+     * Helper method to create a test appointment with standard test values.
+     * This method centralizes test data creation to ensure consistency across
+     * defensive copying tests and reduce code duplication. Using consistent
+     * test data makes tests more maintainable and reduces the risk of 
+     * inconsistent behavior between related test scenarios.
+     * 
+     * @return a new Appointment instance with predefined test values
+     */
+    private Appointment createTestAppointment() {
+        String validId = "APP123";
+        Date futureDate = new Date(System.currentTimeMillis() + 86400000); // Tomorrow
+        String validDescription = "Test appointment";
+        return new Appointment(validId, futureDate, validDescription);
+    }
+
+    /**
+     * Helper method to create a future date for testing.
+     * Centralizes date creation logic to ensure all tests use consistent
+     * future dates and makes it easier to modify date offset if needed.
+     * 
+     * @return a Date object set to tomorrow
+     */
+    private Date createFutureDate() {
+        return new Date(System.currentTimeMillis() + 86400000); // Tomorrow
+    }
+
+    @Nested
+    @DisplayName("Defensive Copying Tests")
+    class DefensiveCopyingTests {
+        
+        @Test
+        @DisplayName("getAppointmentDate() should return defensive copies")
+        void testGetAppointmentDateDefensiveCopying() {
+            // Create appointment using helper method for consistency
+            Appointment appointment = createTestAppointment();
+            Date originalDate = createFutureDate();
+
+            // Test that getAppointmentDate() returns the correct date
+            Date retrievedDate = appointment.getAppointmentDate();
+            assertEquals(originalDate.getTime(), retrievedDate.getTime(), 
+                         "Retrieved date should equal original date");
+
+            // Test defensive copying - modifying returned date should not affect internal state
+            Date secondRetrievedDate = appointment.getAppointmentDate();
+            assertNotSame(retrievedDate, secondRetrievedDate, 
+                          "Each call to getAppointmentDate() should return a new Date object");
+
+            // Modify the retrieved date and verify internal state is unchanged
+            long originalTime = retrievedDate.getTime();
+            retrievedDate.setTime(0); // Modify returned date
+            
+            Date thirdRetrievedDate = appointment.getAppointmentDate();
+            assertEquals(originalTime, thirdRetrievedDate.getTime(), 
+                         "Internal date should not be affected by modifications to returned date");
+
+            // Verify the retrieved date is different from what we modified
+            assertNotEquals(0, thirdRetrievedDate.getTime(), 
+                            "Internal date should retain original value");
+        }
+
+        @Test
+        @DisplayName("Constructor should create defensive copies of Date parameters")
+        void testConstructorDefensiveCopying() {
+            String validId = "APP123";
+            Date originalDate = createFutureDate();
+            String validDescription = "Test appointment";
+            long originalTime = originalDate.getTime();
+
+            Appointment appointment = new Appointment(validId, originalDate, validDescription);
+
+            // Modify the original date passed to constructor
+            originalDate.setTime(System.currentTimeMillis() - 86400000); // Yesterday
+
+            // Verify appointment's internal date is unaffected
+            Date appointmentDate = appointment.getAppointmentDate();
+            assertEquals(originalTime, appointmentDate.getTime(), 
+                         "Appointment's internal date should not be affected by modifications to constructor parameter");
+
+            // Verify the appointment still has a valid future date
+            assertNotEquals(originalDate.getTime(), appointmentDate.getTime(), 
+                            "Appointment date should be different from modified original");
+        }
     }
 }
